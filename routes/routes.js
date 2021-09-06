@@ -5,13 +5,14 @@ const register = require('../controllers/registration').register
 const loginPage = require('../controllers/login').loginPage
 const login = require('../controllers/login').login
 const home = require('../controllers/home').home
+const auth = require('../middlewares/authorize')
 
 
-router.get('/registration', registrationPage)
-router.get('/login', loginPage)
+router.get('/registration', auth.isLoggedIn, registrationPage)
+router.get('/login', auth.isLoggedIn, loginPage)
 router.post('/registration', register)
 router.post('/login', login)
-router.get('/', home)
+router.get('/', auth.isNotLoggedIn, home)
 
 
 

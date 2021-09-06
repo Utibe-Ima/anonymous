@@ -6,27 +6,23 @@ const Op = Sequelize.Op
 
 
 
-passport.use(new LocalStrategy(function (username, password, done) {
-
-    db.user.findOne({where: {username: {[Op.like]: username}}}, async (err, user)=> {
-        if (err) { return done(err) }
-        if (!user) { return done(null, false, { message: "Incorrect Username" }) }
-        if (!(await user.verifyPassword(password))) return done(null, false, { message: "Incorrect Password" })
-        return done(null, user)
-    })
-
-
-    passport.serializeUser(function (user, done) {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser(async function (id, done) {
-        const user = await db.user.findByPk(id);
-        if (!user) return done(err, null)
-        return done(null, user)
-    })
-
-    
+passport.use(new LocalStrategy(async function (username, password, done) {
+    const user = await db.user.findOne({ where: { username: { [Op.like]: username } } })
+    if (!user) { return done(null, false, { message: "Incorrect Username" }) }
+    if (!(await user.verifyPassword(password))) return done(null, false, { message: "Incorrect Password" })
+    return done(null, user)
 }))
+
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async function (id, done) {
+    const user = await db.user.findByPk(id);
+    if (!user) return done(err, null)
+    done(null, user)
+})
+
 
 module.exports = passport

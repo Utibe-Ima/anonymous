@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 
     User.prototype.verifyPassword = async function (password) {
         // runs the check to verify password
-        let match = await bcrypt.compare(password, user.password)
+        let match = await bcrypt.compare(password, this.password)
         return match
     };
     return User;
